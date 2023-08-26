@@ -66,24 +66,36 @@
             display: none;
         }
         .knob {
-background-repeat: no-repeat;
-position:absolute;
-height: 200px;
-width: 200px;
-background-image:url("knob.png");
-background-size: contain;
-top: 305px;
-left: 610px;
+            background-repeat: no-repeat;
+            position:absolute;
+            height: 200px;
+            width: 200px;
+            background-image:url("knob.png");
+            background-size: contain;
+            top: 300px;
+            left: 602px;
         }
+
+        .knob2 {
+            background-repeat: no-repeat;
+            position:absolute;
+            height: 200px;
+            width: 200px;
+            background-size: contain;
+            top: 300px;
+            left: 602px;
+            z-index: 99999;
+        }
+
         .dial {
-background-repeat: no-repeat;
-position:absolute;
-height: 300px;
-width: 300px;
-background-image:url("dial.png");
-background-size: contain;
-top: 250px;
-left: 563px;
+            background-repeat: no-repeat;
+            position:absolute;
+            height: 300px;
+            width: 300px;
+            background-image:url("dial.png");
+            background-size: contain;
+            top: 250px;
+            left: 553px;
         }
         textarea {
             font-family: "Lexend", "Helvetica Neue",san-serif;
@@ -121,299 +133,525 @@ left: 563px;
         form {
             position: absolute;
             z-index: 999999;
+            left: 850px;
+            top: 60px;
+            background-color: #333;
+            padding: 1rem;
+            width: 10rem;
+            text-align:right;
         }
+        input[type=number] {
+        width: 4rem;
+        text-align: right;
+        background: #000;
+        color: #0c0;
+        font-family: monospace;
+        font-weight: 900;
+        font-size: 24px;
+    }
+    label {
+        color: #ccc;
+        font-size: 24px;
+    }
+
+    .digit {
+        background-color:#000;
+        color: #0f0;
+        font-weight: 900;
+        font-family: monospace;
+        font-size: 18px;
+        display: inline-block;
+        width: 4rem;
+    }
+
+    .radiate {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      animation-name: radiate;
+      animation-duration: 4s;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+      animation-direction: normal;
+      animation-fill-mode: forward;
+    }
+    .radiate path {
+      fill: #fff;
+    }
+
+    .radiate:nth-child(1) {
+      animation-delay: 0.5s;
+    }
+
+    .radiate:nth-child(2) {
+      animation-delay: 1s;
+    }
+
+    .radiate:nth-child(3) {
+      animation-delay: 1.5s;
+    }
+
+    .radiate:nth-child(4) {
+      animation-delay: 2s;
+    }
+
+    .radiate:nth-child(5) {
+      animation-delay: 2.5s;
+    }
+
+    .radiate:nth-child(6) {
+      animation-delay: 3s;
+    }
+
+    .radiate:nth-child(7) {
+      animation-delay: 3.5s;
+    }
+
+    .radiate:nth-child(8) {
+      animation-delay: 4s;
+    }
+
+    @keyframes radiate {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      1% {
+        opacity: 0.1;
+      }
+      100% {
+        opacity: 0;
+        transform: scale(1);
+      }
+    }
+.radiator {
+    left: -710px;
+    position: absolute;
+    top: -250px;
+    height: 80vh;
+    width: 100vw;
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
+
 <body>
-<main>
-    <form oninput="app.updateSettings()">
-        <input id="alpha" type="text" size="5" value="10"><br>
-        <input id="beta" type="text" size="5" value="20" ><br>
-        <input id="gamma" type="text" size="5" value="4" ><br>
-    </form>
-    <!--object id="machine" type="image/svg+xml" data="machine2.svg" class="machine">
+    <main>
+        <form oninput="app.updateSettings(event)">
+            <label>λ</label> <span id='alphaVal' class='digit'>10</span> <input id="alpha" type="range" min="0" max="1000" size="5" value="10"><br>
+            <label>β</label> <span id='betaVal' class='digit'>20</span> <input id="beta"  type="range" min="0" max="1000" size="5" value="20"><br>
+            <label>ν</label> <span id='gammaVal' class='digit'>4000</span> <input id="gamma" type="range" min="256" max="30000" step="100" size="5" value="4000"><br>
+        </form>
+        <!--object id="machine" type="image/svg+xml" data="machine2.svg" class="machine">
         Manifestation Machine!
     </object-->
-<svg id="power" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1770px" height="1195px">
-<style>
- .trace {
-    stroke-dasharray: 10 20;
-    animation: dash 4s linear infinite;
- }
- @keyframes dash {
-  to {
-    stroke-dashoffset: -1000;
-  }
-}
-</style>
-<defs>
-<linearGradient id="PSgrad_0" x1="0%" x2="0%" y1="100%" y2="0%">
-  <stop offset="0%" stop-color="rgb(234,206,50)" stop-opacity="1" />
-  <stop offset="100%" stop-color="rgb(255,255,255)" stop-opacity="1" />
-</linearGradient>
-<linearGradient id="PSgrad_1" x1="0%" x2="92.05%" y1="0%" y2="39.073%">
-  <stop offset="0%" stop-color="rgb(173,173,173)" stop-opacity="1" />
-  <stop offset="22%" stop-color="rgb(198,198,198)" stop-opacity="1" />
-  <stop offset="44%" stop-color="rgb(238,238,238)" stop-opacity="1" />
-  <stop offset="53%" stop-color="rgb(238,238,238)" stop-opacity="1" />
-  <stop offset="73%" stop-color="rgb(198,198,198)" stop-opacity="1" />
-  <stop offset="100%" stop-color="rgb(176,176,176)" stop-opacity="1" />
-</linearGradient>
-
-</defs>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M252.000,466.000 L252.000,439.000 L612.000,437.000 C612.000,437.000 645.076,245.000 838.000,245.000 C922.087,245.000 1077.000,306.195 1077.000,479.000 C1077.000,631.258 951.189,699.048 885.000,710.000 C885.968,717.170 887.000,752.000 887.000,752.000 L1078.000,752.000 L1078.000,780.000 L856.000,780.000 C856.000,780.000 855.704,699.106 858.000,684.000 C968.970,684.000 1048.000,563.558 1048.000,481.000 C1048.000,398.442 984.185,274.000 840.000,274.000 C684.037,274.000 637.000,427.745 637.000,466.000 C633.898,465.289 252.000,466.000 252.000,466.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M1079.000,482.000 L1173.000,482.000 L1173.000,1011.000 L531.000,1011.000 L531.000,1103.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M842.000,796.000 L1122.000,796.000 L1124.000,927.000 L406.000,927.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M618.000,927.000 L618.000,887.000 L629.000,882.000 L607.000,871.000 L628.000,860.000 L607.000,851.000 L629.000,839.000 L605.000,828.000 L627.000,817.000 L616.000,813.000 L616.000,789.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M537.000,927.000 L535.000,886.000 L547.000,881.000 L525.000,871.000 L545.000,858.000 L526.000,850.000 L548.000,841.000 L523.000,827.000 L546.000,819.000 L536.000,811.000 L536.000,790.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M616.000,790.000 L41.000,789.000 L43.000,1187.000 L1239.000,1185.000 L1241.000,770.000 L1760.000,769.000 L1762.000,68.000 L1225.000,68.000 L1225.000,741.000 L1733.000,739.000 L1734.000,96.000 L1251.000,95.000 L1251.000,714.000 L1708.000,715.000 L1707.000,122.000 L1280.000,124.000 L1277.000,688.000 L1681.000,686.000 L1680.000,148.000 L1307.000,150.000 L1305.000,659.000 L1655.000,659.000 L1653.000,178.000 L1334.000,177.000 L1333.000,632.000 L1625.000,631.000 L1627.000,204.000 L1361.000,205.000 L1361.000,605.000 L1598.000,605.000 L1599.000,231.000 L1388.000,231.000 L1390.000,579.000 L1572.000,579.000 L1573.000,259.000 L1416.000,259.000 L1415.000,552.000 L1545.000,552.000 L1545.000,287.000 L1444.000,287.000 L1442.000,523.000 L1521.000,523.000 L1520.000,312.000 L1468.000,312.000 L1467.000,490.000 L1484.000,490.000 L1483.000,327.000 L1503.000,327.000 L1504.000,509.000 L1456.000,509.000 L1457.000,299.000 L1530.000,299.000 L1530.000,537.000 L1430.000,537.000 L1432.000,272.000 L1556.000,272.000 L1558.000,566.000 L1403.000,566.000 L1402.000,244.000 L1584.000,245.000 L1586.000,591.000 L1377.000,592.000 L1375.000,217.000 L1611.000,219.000 L1611.000,618.000 L1350.000,618.000 L1349.000,193.000 L1640.000,192.000 L1637.000,647.000 L1321.000,645.000 L1322.000,165.000 L1666.000,164.000 L1666.000,672.000 L1295.000,671.000 L1294.000,138.000 L1694.000,138.000 L1693.000,699.000 L1267.000,699.000 L1267.000,112.000 L1718.000,110.000 L1720.000,724.000 L1239.000,726.000 L1241.000,87.000 L1745.000,85.000 L1746.000,753.000 L1225.000,753.000 L1223.000,1135.000 L987.000,1137.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M973.000,1137.000 L324.000,1137.000 C324.000,1137.000 320.168,1116.892 306.000,1117.000 C287.985,1117.137 274.784,1149.663 294.000,1149.000 C313.216,1148.337 294.111,1116.000 283.000,1116.000 C267.007,1116.000 249.000,1148.000 271.000,1148.000 C293.000,1148.000 271.581,1116.000 260.000,1116.000 C248.419,1116.000 228.241,1148.000 247.000,1148.000 C265.759,1148.000 255.690,1117.000 237.000,1117.000 C218.310,1117.000 210.440,1149.186 223.000,1149.000 C235.560,1148.814 234.469,1115.984 212.000,1115.000 C189.531,1114.016 189.763,1149.549 202.000,1150.000 C214.237,1150.451 209.822,1117.000 189.000,1117.000 C168.178,1117.000 171.000,1136.000 171.000,1136.000 L136.000,1135.000 L136.000,1092.000 L228.000,1092.000 L230.000,949.000 L267.000,950.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M995.000,1109.000 C995.000,1109.000 982.989,1118.509 983.000,1138.000 C983.011,1157.491 997.000,1167.000 997.000,1167.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M975.000,1109.000 L975.000,1165.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M527.000,1099.000 L532.000,1113.000 L537.000,1099.000 L527.000,1099.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M342.000,1137.000 L340.000,1016.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M407.000,973.000 L475.000,974.000 L474.000,943.000 C474.000,943.000 460.000,943.557 460.000,927.000 C460.000,910.443 476.000,912.000 476.000,912.000 L475.000,834.000 L372.000,834.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M371.000,791.000 L371.000,884.000 L315.000,884.000 L315.000,869.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M265.000,945.000 L277.000,950.000 L265.000,954.000 L265.000,945.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M310.000,1015.000 L372.000,1015.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M309.000,973.000 L327.000,973.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M333.000,973.000 L350.000,973.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M355.000,973.000 L372.000,973.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M282.000,657.000 L237.000,657.000 L237.000,763.000 L325.000,763.000 L326.000,775.000 C326.000,775.000 312.482,775.696 312.000,789.000 C311.518,802.304 328.000,806.000 328.000,806.000 L327.000,855.000 L340.000,872.000 L356.000,856.000 L355.000,804.000 C355.000,804.000 341.645,802.136 341.000,791.000 C340.355,779.864 354.000,775.000 354.000,775.000 L355.000,763.000 L430.000,762.000 L430.000,659.000 L386.000,658.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M309.000,950.000 L325.000,950.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M333.000,950.000 L348.000,950.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M355.000,951.000 L370.000,951.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M309.000,927.000 L326.000,927.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M333.000,927.000 L348.000,927.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M356.000,927.000 L372.000,927.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M252.000,577.000 L415.000,579.000 L415.000,728.000 L253.000,728.000 L252.000,577.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M283.000,626.000 L283.000,689.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M296.000,602.000 L296.000,711.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M313.000,627.000 L313.000,689.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M327.000,602.000 L327.000,710.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M341.000,626.000 L341.000,687.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M356.000,601.000 L356.000,711.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M371.000,627.000 L371.000,689.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M386.000,602.000 L386.000,711.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M251.000,495.000 L252.000,524.000 C252.000,524.000 606.067,525.116 611.000,526.000 C611.000,594.302 714.189,711.000 796.000,711.000 C797.534,711.000 797.000,841.000 797.000,841.000 L1074.000,841.000 L1074.000,813.000 L828.000,812.000 C828.000,812.000 825.750,688.533 825.000,684.000 C750.400,684.000 637.000,600.160 637.000,498.000 C626.762,496.219 251.000,495.000 251.000,495.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M340.500,857.000 C392.691,857.000 435.000,899.309 435.000,951.500 C435.000,1003.691 392.691,1046.000 340.500,1046.000 C288.309,1046.000 246.000,1003.691 246.000,951.500 C246.000,899.309 288.309,857.000 340.500,857.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M537.000,921.000 C540.314,921.000 543.000,923.686 543.000,927.000 C543.000,930.314 540.314,933.000 537.000,933.000 C533.686,933.000 531.000,930.314 531.000,927.000 C531.000,923.686 533.686,921.000 537.000,921.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M618.085,921.885 C621.510,921.885 624.286,924.661 624.286,928.085 C624.286,931.510 621.510,934.286 618.085,934.286 C614.661,934.286 611.885,931.510 611.885,928.085 C611.885,924.661 614.661,921.885 618.085,921.885 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M371.200,785.000 C374.624,785.000 377.399,787.776 377.399,791.200 C377.399,794.624 374.624,797.399 371.200,797.399 C367.776,797.399 365.000,794.624 365.000,791.200 C365.000,787.776 367.776,785.000 371.200,785.000 Z"/>
-<path class='trace' fill-rule="evenodd"  fill="rgb(200, 200, 0)"
- d="M842.500,803.000 C838.910,803.000 836.000,800.090 836.000,796.500 C836.000,792.910 838.910,790.000 842.500,790.000 C846.090,790.000 849.000,792.910 849.000,796.500 C849.000,800.090 846.090,803.000 842.500,803.000 ZM619.500,934.000 C615.910,934.000 613.000,931.090 613.000,927.500 C613.000,923.910 615.910,921.000 619.500,921.000 C623.090,921.000 626.000,923.910 626.000,927.500 C626.000,931.090 623.090,934.000 619.500,934.000 ZM536.500,933.000 C532.910,933.000 530.000,930.090 530.000,926.500 C530.000,922.910 532.910,920.000 536.500,920.000 C540.090,920.000 543.000,922.910 543.000,926.500 C543.000,930.090 540.090,933.000 536.500,933.000 ZM342.000,1143.000 C338.686,1143.000 336.000,1140.314 336.000,1137.000 C336.000,1133.686 338.686,1131.000 342.000,1131.000 C345.314,1131.000 348.000,1133.686 348.000,1137.000 C348.000,1140.314 345.314,1143.000 342.000,1143.000 ZM199.500,494.000 C189.283,494.000 181.000,485.717 181.000,475.500 C181.000,465.283 189.283,457.000 199.500,457.000 C209.717,457.000 218.000,465.283 218.000,475.500 C218.000,485.717 209.717,494.000 199.500,494.000 ZM136.500,1099.000 C132.358,1099.000 129.000,1095.642 129.000,1091.500 C129.000,1087.358 132.358,1084.000 136.500,1084.000 C140.642,1084.000 144.000,1087.358 144.000,1091.500 C144.000,1095.642 140.642,1099.000 136.500,1099.000 ZM137.000,795.000 C133.134,795.000 130.000,791.866 130.000,788.000 C130.000,784.134 133.134,781.000 137.000,781.000 C140.866,781.000 144.000,784.134 144.000,788.000 C144.000,791.866 140.866,795.000 137.000,795.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M136.000,1092.000 L136.000,1069.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M114.000,1067.000 L160.000,1067.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,1060.000 L151.000,1059.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,1053.000 L160.000,1052.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,1046.000 L151.000,1045.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,1038.000 L160.000,1038.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,1032.000 L151.000,1031.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,1026.000 L160.000,1025.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,1018.000 L151.000,1018.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,1011.000 L160.000,1010.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,1005.000 L151.000,1005.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,998.000 L160.000,998.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,992.000 L151.000,991.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,984.000 L160.000,985.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,978.000 L151.000,977.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,970.000 L160.000,970.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,962.000 L151.000,963.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,957.000 L160.000,957.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,950.000 L151.000,950.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,943.000 L160.000,942.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,936.000 L151.000,936.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,928.000 L160.000,929.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,922.000 L151.000,922.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,915.000 L160.000,915.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,908.000 L151.000,909.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,901.000 L160.000,901.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,895.000 L151.000,895.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,887.000 L160.000,887.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,881.000 L151.000,882.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,875.000 L160.000,875.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,866.000 L151.000,866.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,860.000 L160.000,860.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,853.000 L151.000,853.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,847.000 L160.000,847.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,840.000 L151.000,840.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,833.000 L160.000,833.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,826.000 L151.000,826.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M112.000,818.000 L160.000,818.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M122.000,812.000 L151.000,813.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M137.000,813.000 L138.000,789.000 "/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="rgb(200, 200, 0)"
- d="M841.500,429.000 C871.047,429.000 895.000,452.953 895.000,482.500 C895.000,512.047 871.047,536.000 841.500,536.000 C811.953,536.000 788.000,512.047 788.000,482.500 C788.000,452.953 811.953,429.000 841.500,429.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M817.000,524.000 C817.000,524.000 771.207,604.759 768.000,608.000 C759.648,603.854 744.224,592.328 737.000,585.000 C739.880,582.300 805.000,517.000 805.000,517.000 L797.000,506.000 C797.000,506.000 716.287,551.683 712.000,554.000 C707.652,548.620 696.655,524.542 696.000,518.000 C697.891,517.983 792.000,494.000 792.000,494.000 L789.000,480.000 C789.000,480.000 693.982,481.035 691.000,481.000 C690.272,465.878 697.000,442.000 697.000,442.000 L796.000,469.000 L800.000,458.000 C800.000,458.000 718.257,408.232 714.000,406.000 C717.046,397.955 737.000,374.000 737.000,374.000 L806.000,446.000 L817.000,438.000 C817.000,438.000 769.653,353.322 768.000,351.000 C774.490,346.234 792.799,338.616 804.000,337.000 C805.991,340.962 830.000,435.000 830.000,435.000 L843.000,433.000 C843.000,433.000 842.175,334.843 842.000,332.000 C854.250,331.120 877.132,335.566 881.000,338.000 C879.550,341.973 854.000,434.000 854.000,434.000 L865.000,440.000 C865.000,440.000 913.906,355.463 915.000,353.000 C929.318,359.181 947.000,377.000 947.000,377.000 L876.000,446.000 L886.000,455.000 C886.000,455.000 966.641,409.512 969.000,408.000 C973.764,409.357 981.233,433.676 984.000,443.000 C980.377,443.521 892.000,467.000 892.000,467.000 L893.000,480.000 C893.000,480.000 985.126,481.633 989.000,480.000 C991.667,485.198 989.856,513.951 984.000,519.000 C981.074,518.023 890.000,492.000 890.000,492.000 L886.000,506.000 C886.000,506.000 966.976,552.629 970.000,555.000 C971.099,561.750 953.017,581.664 947.000,584.000 C942.635,580.513 876.000,516.000 876.000,516.000 L867.000,523.000 L914.000,607.000 L914.000,607.000 L867.000,523.000 L817.000,524.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="url(#PSgrad_1)"
- d="M781.000,592.000 L770.000,610.000 C770.000,610.000 690.274,566.771 690.000,479.000 C689.777,407.547 747.969,330.000 840.000,330.000 C935.118,330.000 990.000,417.274 990.000,480.000 C990.000,585.042 910.000,612.000 910.000,612.000 L902.000,595.000 C902.000,595.000 969.000,569.096 969.000,480.000 C969.000,398.639 897.754,349.000 841.000,349.000 C769.611,349.000 711.000,407.757 711.000,479.000 C711.000,553.834 781.000,592.000 781.000,592.000 Z"/>
-<path class='trace' fill-rule="evenodd"  stroke="rgb(200, 200, 0)" stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
- d="M198.000,479.000 C198.000,479.000 197.556,362.374 199.000,351.000 C139.847,351.547 2.000,298.823 2.000,174.000 C2.000,46.043 117.701,2.000 185.000,2.000 C252.299,2.000 358.000,54.725 358.000,158.000 C358.000,261.275 253.129,304.000 192.000,304.000 C130.871,304.000 36.000,259.729 36.000,177.000 C36.000,94.271 95.477,30.000 187.000,30.000 C278.523,30.000 327.000,101.379 327.000,157.000 C327.000,212.621 279.995,281.000 191.000,281.000 C102.005,281.000 59.000,219.132 59.000,175.000 C59.000,130.868 87.081,50.000 184.000,50.000 C260.730,50.000 306.914,104.281 307.000,157.000 C307.086,209.719 263.244,263.000 190.000,263.000 C116.756,263.000 76.000,205.038 76.000,174.000 C76.000,142.962 94.080,65.000 185.000,65.000 C275.920,65.000 292.000,141.024 292.000,157.000 C292.000,172.976 277.640,249.000 190.000,249.000 C102.360,249.000 93.175,179.766 92.000,175.000 C87.519,156.831 97.905,77.000 185.000,77.000 C272.095,77.000 276.342,148.506 277.000,161.000 C279.160,202.042 232.882,237.018 189.000,238.000 C145.118,238.982 106.118,199.188 106.000,173.000 C105.882,146.812 111.400,118.993 134.000,104.000 C156.600,89.007 181.177,87.409 185.000,88.000 C188.823,88.591 217.537,87.348 236.000,104.000 C254.463,120.652 267.176,138.838 266.000,157.000 C264.824,175.162 251.548,204.184 238.000,212.000 C224.452,219.816 201.979,227.306 190.000,227.000 C178.021,226.694 148.408,220.180 139.000,210.000 C129.592,199.820 117.492,184.548 117.000,173.000 C116.508,161.452 115.793,140.231 127.000,127.000 C138.207,113.769 149.257,105.621 163.000,102.000 C176.743,98.379 205.497,96.120 219.000,106.000 C232.503,115.880 246.512,124.122 250.000,140.000 C253.488,155.878 254.721,172.802 250.000,180.000 C245.279,187.198 238.207,195.600 231.000,201.000 C223.793,206.400 199.076,218.794 178.000,214.000 C156.924,209.206 135.809,197.850 130.000,182.000 C124.191,166.150 127.988,145.437 135.000,136.000 C142.012,126.563 160.996,107.036 181.000,108.000 C201.004,108.964 216.166,113.331 223.000,120.000 C229.834,126.669 241.895,137.969 244.000,149.000 C246.105,160.031 245.514,168.940 241.000,176.000 C236.486,183.060 229.499,194.228 221.000,198.000 C212.501,201.772 202.279,207.933 189.000,208.000 C175.721,208.067 163.479,202.179 158.000,198.000 C152.521,193.821 139.248,179.558 137.000,170.000 C134.752,160.442 140.120,146.732 145.000,140.000 C149.880,133.268 158.440,122.871 167.000,120.000 C175.560,117.129 190.520,116.807 197.000,118.000 C203.480,119.193 212.905,125.288 219.000,130.000 C225.095,134.712 232.053,144.922 233.000,151.000 C233.947,157.078 233.043,171.900 229.000,177.000 C224.957,182.100 225.917,194.014 201.000,198.000 C176.083,201.986 174.060,198.055 166.000,194.000 C157.940,189.945 149.933,177.340 148.000,172.000 C146.067,166.660 149.408,159.884 149.000,153.000 C148.592,146.116 157.000,137.000 157.000,137.000 L170.000,129.000 L186.000,125.000 L199.000,128.000 L214.000,135.000 L224.000,153.000 L221.000,173.000 L209.000,186.000 L189.000,191.000 L169.000,184.000 L161.000,175.000 L157.000,160.000 L159.000,149.000 L166.000,141.000 L184.000,135.000 L201.000,136.000 L211.000,144.000 L216.000,159.000 L212.000,172.000 L201.000,180.000 L183.000,182.000 L172.000,177.000 L167.000,164.000 L170.000,149.000 L182.000,142.000 L192.000,143.000 L202.000,147.000 L207.000,157.000 L205.000,167.000 L197.000,173.000 L184.000,174.000 L175.000,166.000 L176.000,152.000 L187.000,150.000 L194.000,154.000 L198.000,161.000 L194.000,168.000 L186.000,168.000 L180.000,161.000 L184.000,157.000 L190.000,158.000 L190.000,164.000 "/>
-</svg>
-    <div class="dial"></div>
-    <div class="knob"></div>
-    <div class="witness"><textarea width="20" height="4">Type your wish here...</textarea></div>
-</main>
-<script>
-const $ = str => document.querySelector(str);
-const $$ = str => document.querySelectorAll(str);
-
-(function() {
-    const app = {
-        data: {},
-        state: {
-            loaded: false,
-            knob: 0
-        },
-        init: function() {
-            app.state.loaded = true;
-            $(".knob").addEventListener("mousedown", function(e) {
-                app.state.turning = 1;
-                app.state.lastX = e.x;
-                app.state.lastY = e.y;
-            });
-            $(".knob").addEventListener("mouseup", function(e) {
-                app.state.turning = 0;
-            });
-            document.addEventListener("mousemove", function(e) {
-                if (app.state.turning) {
-                    let deltaX = app.state.lastX - e.x;
-                    let deltaY = app.state.lastY - e.y;
-                
-                    app.state.knob += (app.state.lastY < e.y) ? 5 : -5;
-                    app.state.lastY = e.y;
-                    $(".knob").style.rotate = app.state.knob + 'deg';
+        <svg id="power" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+            width="1770px" height="1195px">
+            <style>
+                .trace {
+                    stroke-dasharray: 10 20;
+                    animation: dash 4s linear infinite;
                 }
-            });
-        },
-        fetch: function(url, callback) {
-            fetch(url).then(response=>response.json()).then(data=>{
-                app.data = data;
-                app.state.loaded = true;
-                if (callback && typeof(callback) === "function") {
-                    callback(data);
-                }
-            });
-        },
-        display: function(data, tgt) {
-            let out = "<table><thead><tr>";
-            const keys = Object.keys(data[0]);
-            if (keys) {
-                keys.forEach(key => {
-                    out += `<th>${key}</th>`;
-                });
-            }
-            out += "</tr></thead><tbody>";
-            data.forEach(item=>{
-                out += `<tr>`;
-                keys.forEach(key => {
-                    out += `<td>${item[i]}</td>`;
-                });
-                out += `</tr>`;
-            });
-            out += "</tbody></table>";
 
-            if (tgt) {
-                tgt.innerHTML = out;
+                @keyframes dash {
+                    to {
+                        stroke-dashoffset: -1000;
+                    }
+                }
+            </style>
+            <defs>
+                <linearGradient id="PSgrad_0" x1="0%" x2="0%" y1="100%" y2="0%">
+                    <stop offset="0%" stop-color="rgb(234,206,50)" stop-opacity="1" />
+                    <stop offset="100%" stop-color="rgb(255,255,255)" stop-opacity="1" />
+                </linearGradient>
+                <linearGradient id="PSgrad_1" x1="0%" x2="92.05%" y1="0%" y2="39.073%">
+                    <stop offset="0%" stop-color="rgb(173,173,173)" stop-opacity="1" />
+                    <stop offset="22%" stop-color="rgb(198,198,198)" stop-opacity="1" />
+                    <stop offset="44%" stop-color="rgb(238,238,238)" stop-opacity="1" />
+                    <stop offset="53%" stop-color="rgb(238,238,238)" stop-opacity="1" />
+                    <stop offset="73%" stop-color="rgb(198,198,198)" stop-opacity="1" />
+                    <stop offset="100%" stop-color="rgb(176,176,176)" stop-opacity="1" />
+                </linearGradient>
+
+            </defs>
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M252.000,466.000 L252.000,439.000 L612.000,437.000 C612.000,437.000 645.076,245.000 838.000,245.000 C922.087,245.000 1077.000,306.195 1077.000,479.000 C1077.000,631.258 951.189,699.048 885.000,710.000 C885.968,717.170 887.000,752.000 887.000,752.000 L1078.000,752.000 L1078.000,780.000 L856.000,780.000 C856.000,780.000 855.704,699.106 858.000,684.000 C968.970,684.000 1048.000,563.558 1048.000,481.000 C1048.000,398.442 984.185,274.000 840.000,274.000 C684.037,274.000 637.000,427.745 637.000,466.000 C633.898,465.289 252.000,466.000 252.000,466.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M1079.000,482.000 L1173.000,482.000 L1173.000,1011.000 L531.000,1011.000 L531.000,1103.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M842.000,796.000 L1122.000,796.000 L1124.000,927.000 L406.000,927.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M618.000,927.000 L618.000,887.000 L629.000,882.000 L607.000,871.000 L628.000,860.000 L607.000,851.000 L629.000,839.000 L605.000,828.000 L627.000,817.000 L616.000,813.000 L616.000,789.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M537.000,927.000 L535.000,886.000 L547.000,881.000 L525.000,871.000 L545.000,858.000 L526.000,850.000 L548.000,841.000 L523.000,827.000 L546.000,819.000 L536.000,811.000 L536.000,790.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M616.000,790.000 L41.000,789.000 L43.000,1187.000 L1239.000,1185.000 L1241.000,770.000 L1760.000,769.000 L1762.000,68.000 L1225.000,68.000 L1225.000,741.000 L1733.000,739.000 L1734.000,96.000 L1251.000,95.000 L1251.000,714.000 L1708.000,715.000 L1707.000,122.000 L1280.000,124.000 L1277.000,688.000 L1681.000,686.000 L1680.000,148.000 L1307.000,150.000 L1305.000,659.000 L1655.000,659.000 L1653.000,178.000 L1334.000,177.000 L1333.000,632.000 L1625.000,631.000 L1627.000,204.000 L1361.000,205.000 L1361.000,605.000 L1598.000,605.000 L1599.000,231.000 L1388.000,231.000 L1390.000,579.000 L1572.000,579.000 L1573.000,259.000 L1416.000,259.000 L1415.000,552.000 L1545.000,552.000 L1545.000,287.000 L1444.000,287.000 L1442.000,523.000 L1521.000,523.000 L1520.000,312.000 L1468.000,312.000 L1467.000,490.000 L1484.000,490.000 L1483.000,327.000 L1503.000,327.000 L1504.000,509.000 L1456.000,509.000 L1457.000,299.000 L1530.000,299.000 L1530.000,537.000 L1430.000,537.000 L1432.000,272.000 L1556.000,272.000 L1558.000,566.000 L1403.000,566.000 L1402.000,244.000 L1584.000,245.000 L1586.000,591.000 L1377.000,592.000 L1375.000,217.000 L1611.000,219.000 L1611.000,618.000 L1350.000,618.000 L1349.000,193.000 L1640.000,192.000 L1637.000,647.000 L1321.000,645.000 L1322.000,165.000 L1666.000,164.000 L1666.000,672.000 L1295.000,671.000 L1294.000,138.000 L1694.000,138.000 L1693.000,699.000 L1267.000,699.000 L1267.000,112.000 L1718.000,110.000 L1720.000,724.000 L1239.000,726.000 L1241.000,87.000 L1745.000,85.000 L1746.000,753.000 L1225.000,753.000 L1223.000,1135.000 L987.000,1137.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M973.000,1137.000 L324.000,1137.000 C324.000,1137.000 320.168,1116.892 306.000,1117.000 C287.985,1117.137 274.784,1149.663 294.000,1149.000 C313.216,1148.337 294.111,1116.000 283.000,1116.000 C267.007,1116.000 249.000,1148.000 271.000,1148.000 C293.000,1148.000 271.581,1116.000 260.000,1116.000 C248.419,1116.000 228.241,1148.000 247.000,1148.000 C265.759,1148.000 255.690,1117.000 237.000,1117.000 C218.310,1117.000 210.440,1149.186 223.000,1149.000 C235.560,1148.814 234.469,1115.984 212.000,1115.000 C189.531,1114.016 189.763,1149.549 202.000,1150.000 C214.237,1150.451 209.822,1117.000 189.000,1117.000 C168.178,1117.000 171.000,1136.000 171.000,1136.000 L136.000,1135.000 L136.000,1092.000 L228.000,1092.000 L230.000,949.000 L267.000,950.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M995.000,1109.000 C995.000,1109.000 982.989,1118.509 983.000,1138.000 C983.011,1157.491 997.000,1167.000 997.000,1167.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M975.000,1109.000 L975.000,1165.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M527.000,1099.000 L532.000,1113.000 L537.000,1099.000 L527.000,1099.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M342.000,1137.000 L340.000,1016.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M407.000,973.000 L475.000,974.000 L474.000,943.000 C474.000,943.000 460.000,943.557 460.000,927.000 C460.000,910.443 476.000,912.000 476.000,912.000 L475.000,834.000 L372.000,834.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M371.000,791.000 L371.000,884.000 L315.000,884.000 L315.000,869.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M265.000,945.000 L277.000,950.000 L265.000,954.000 L265.000,945.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M310.000,1015.000 L372.000,1015.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M309.000,973.000 L327.000,973.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M333.000,973.000 L350.000,973.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M355.000,973.000 L372.000,973.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M282.000,657.000 L237.000,657.000 L237.000,763.000 L325.000,763.000 L326.000,775.000 C326.000,775.000 312.482,775.696 312.000,789.000 C311.518,802.304 328.000,806.000 328.000,806.000 L327.000,855.000 L340.000,872.000 L356.000,856.000 L355.000,804.000 C355.000,804.000 341.645,802.136 341.000,791.000 C340.355,779.864 354.000,775.000 354.000,775.000 L355.000,763.000 L430.000,762.000 L430.000,659.000 L386.000,658.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M309.000,950.000 L325.000,950.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M333.000,950.000 L348.000,950.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M355.000,951.000 L370.000,951.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M309.000,927.000 L326.000,927.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M333.000,927.000 L348.000,927.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M356.000,927.000 L372.000,927.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M252.000,577.000 L415.000,579.000 L415.000,728.000 L253.000,728.000 L252.000,577.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M283.000,626.000 L283.000,689.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M296.000,602.000 L296.000,711.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M313.000,627.000 L313.000,689.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M327.000,602.000 L327.000,710.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M341.000,626.000 L341.000,687.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M356.000,601.000 L356.000,711.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M371.000,627.000 L371.000,689.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M386.000,602.000 L386.000,711.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M251.000,495.000 L252.000,524.000 C252.000,524.000 606.067,525.116 611.000,526.000 C611.000,594.302 714.189,711.000 796.000,711.000 C797.534,711.000 797.000,841.000 797.000,841.000 L1074.000,841.000 L1074.000,813.000 L828.000,812.000 C828.000,812.000 825.750,688.533 825.000,684.000 C750.400,684.000 637.000,600.160 637.000,498.000 C626.762,496.219 251.000,495.000 251.000,495.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M340.500,857.000 C392.691,857.000 435.000,899.309 435.000,951.500 C435.000,1003.691 392.691,1046.000 340.500,1046.000 C288.309,1046.000 246.000,1003.691 246.000,951.500 C246.000,899.309 288.309,857.000 340.500,857.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M537.000,921.000 C540.314,921.000 543.000,923.686 543.000,927.000 C543.000,930.314 540.314,933.000 537.000,933.000 C533.686,933.000 531.000,930.314 531.000,927.000 C531.000,923.686 533.686,921.000 537.000,921.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M618.085,921.885 C621.510,921.885 624.286,924.661 624.286,928.085 C624.286,931.510 621.510,934.286 618.085,934.286 C614.661,934.286 611.885,931.510 611.885,928.085 C611.885,924.661 614.661,921.885 618.085,921.885 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M371.200,785.000 C374.624,785.000 377.399,787.776 377.399,791.200 C377.399,794.624 374.624,797.399 371.200,797.399 C367.776,797.399 365.000,794.624 365.000,791.200 C365.000,787.776 367.776,785.000 371.200,785.000 Z" />
+            <path class='trace' fill-rule="evenodd" fill="rgb(200, 200, 0)" d="M842.500,803.000 C838.910,803.000 836.000,800.090 836.000,796.500 C836.000,792.910 838.910,790.000 842.500,790.000 C846.090,790.000 849.000,792.910 849.000,796.500 C849.000,800.090 846.090,803.000 842.500,803.000 ZM619.500,934.000 C615.910,934.000 613.000,931.090 613.000,927.500 C613.000,923.910 615.910,921.000 619.500,921.000 C623.090,921.000 626.000,923.910 626.000,927.500 C626.000,931.090 623.090,934.000 619.500,934.000 ZM536.500,933.000 C532.910,933.000 530.000,930.090 530.000,926.500 C530.000,922.910 532.910,920.000 536.500,920.000 C540.090,920.000 543.000,922.910 543.000,926.500 C543.000,930.090 540.090,933.000 536.500,933.000 ZM342.000,1143.000 C338.686,1143.000 336.000,1140.314 336.000,1137.000 C336.000,1133.686 338.686,1131.000 342.000,1131.000 C345.314,1131.000 348.000,1133.686 348.000,1137.000 C348.000,1140.314 345.314,1143.000 342.000,1143.000 ZM199.500,494.000 C189.283,494.000 181.000,485.717 181.000,475.500 C181.000,465.283 189.283,457.000 199.500,457.000 C209.717,457.000 218.000,465.283 218.000,475.500 C218.000,485.717 209.717,494.000 199.500,494.000 ZM136.500,1099.000 C132.358,1099.000 129.000,1095.642 129.000,1091.500 C129.000,1087.358 132.358,1084.000 136.500,1084.000 C140.642,1084.000 144.000,1087.358 144.000,1091.500 C144.000,1095.642 140.642,1099.000 136.500,1099.000 ZM137.000,795.000 C133.134,795.000 130.000,791.866 130.000,788.000 C130.000,784.134 133.134,781.000 137.000,781.000 C140.866,781.000 144.000,784.134 144.000,788.000 C144.000,791.866 140.866,795.000 137.000,795.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M136.000,1092.000 L136.000,1069.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M114.000,1067.000 L160.000,1067.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,1060.000 L151.000,1059.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,1053.000 L160.000,1052.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,1046.000 L151.000,1045.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,1038.000 L160.000,1038.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,1032.000 L151.000,1031.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,1026.000 L160.000,1025.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,1018.000 L151.000,1018.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,1011.000 L160.000,1010.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,1005.000 L151.000,1005.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,998.000 L160.000,998.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,992.000 L151.000,991.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,984.000 L160.000,985.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,978.000 L151.000,977.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,970.000 L160.000,970.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,962.000 L151.000,963.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,957.000 L160.000,957.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,950.000 L151.000,950.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,943.000 L160.000,942.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,936.000 L151.000,936.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,928.000 L160.000,929.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,922.000 L151.000,922.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,915.000 L160.000,915.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,908.000 L151.000,909.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,901.000 L160.000,901.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,895.000 L151.000,895.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,887.000 L160.000,887.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,881.000 L151.000,882.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,875.000 L160.000,875.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,866.000 L151.000,866.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,860.000 L160.000,860.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,853.000 L151.000,853.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,847.000 L160.000,847.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,840.000 L151.000,840.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,833.000 L160.000,833.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,826.000 L151.000,826.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M112.000,818.000 L160.000,818.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M122.000,812.000 L151.000,813.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M137.000,813.000 L138.000,789.000 " />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="rgb(200, 200, 0)"
+                d="M841.500,429.000 C871.047,429.000 895.000,452.953 895.000,482.500 C895.000,512.047 871.047,536.000 841.500,536.000 C811.953,536.000 788.000,512.047 788.000,482.500 C788.000,452.953 811.953,429.000 841.500,429.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M817.000,524.000 C817.000,524.000 771.207,604.759 768.000,608.000 C759.648,603.854 744.224,592.328 737.000,585.000 C739.880,582.300 805.000,517.000 805.000,517.000 L797.000,506.000 C797.000,506.000 716.287,551.683 712.000,554.000 C707.652,548.620 696.655,524.542 696.000,518.000 C697.891,517.983 792.000,494.000 792.000,494.000 L789.000,480.000 C789.000,480.000 693.982,481.035 691.000,481.000 C690.272,465.878 697.000,442.000 697.000,442.000 L796.000,469.000 L800.000,458.000 C800.000,458.000 718.257,408.232 714.000,406.000 C717.046,397.955 737.000,374.000 737.000,374.000 L806.000,446.000 L817.000,438.000 C817.000,438.000 769.653,353.322 768.000,351.000 C774.490,346.234 792.799,338.616 804.000,337.000 C805.991,340.962 830.000,435.000 830.000,435.000 L843.000,433.000 C843.000,433.000 842.175,334.843 842.000,332.000 C854.250,331.120 877.132,335.566 881.000,338.000 C879.550,341.973 854.000,434.000 854.000,434.000 L865.000,440.000 C865.000,440.000 913.906,355.463 915.000,353.000 C929.318,359.181 947.000,377.000 947.000,377.000 L876.000,446.000 L886.000,455.000 C886.000,455.000 966.641,409.512 969.000,408.000 C973.764,409.357 981.233,433.676 984.000,443.000 C980.377,443.521 892.000,467.000 892.000,467.000 L893.000,480.000 C893.000,480.000 985.126,481.633 989.000,480.000 C991.667,485.198 989.856,513.951 984.000,519.000 C981.074,518.023 890.000,492.000 890.000,492.000 L886.000,506.000 C886.000,506.000 966.976,552.629 970.000,555.000 C971.099,561.750 953.017,581.664 947.000,584.000 C942.635,580.513 876.000,516.000 876.000,516.000 L867.000,523.000 L914.000,607.000 L914.000,607.000 L867.000,523.000 L817.000,524.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="5px" stroke-linecap="butt" stroke-linejoin="miter" fill="url(#PSgrad_1)"
+                d="M781.000,592.000 L770.000,610.000 C770.000,610.000 690.274,566.771 690.000,479.000 C689.777,407.547 747.969,330.000 840.000,330.000 C935.118,330.000 990.000,417.274 990.000,480.000 C990.000,585.042 910.000,612.000 910.000,612.000 L902.000,595.000 C902.000,595.000 969.000,569.096 969.000,480.000 C969.000,398.639 897.754,349.000 841.000,349.000 C769.611,349.000 711.000,407.757 711.000,479.000 C711.000,553.834 781.000,592.000 781.000,592.000 Z" />
+            <path class='trace' fill-rule="evenodd" stroke="rgb(200, 200, 0)"
+                stroke-width="4px" stroke-linecap="butt" stroke-linejoin="miter" fill="none"
+                d="M198.000,479.000 C198.000,479.000 197.556,362.374 199.000,351.000 C139.847,351.547 2.000,298.823 2.000,174.000 C2.000,46.043 117.701,2.000 185.000,2.000 C252.299,2.000 358.000,54.725 358.000,158.000 C358.000,261.275 253.129,304.000 192.000,304.000 C130.871,304.000 36.000,259.729 36.000,177.000 C36.000,94.271 95.477,30.000 187.000,30.000 C278.523,30.000 327.000,101.379 327.000,157.000 C327.000,212.621 279.995,281.000 191.000,281.000 C102.005,281.000 59.000,219.132 59.000,175.000 C59.000,130.868 87.081,50.000 184.000,50.000 C260.730,50.000 306.914,104.281 307.000,157.000 C307.086,209.719 263.244,263.000 190.000,263.000 C116.756,263.000 76.000,205.038 76.000,174.000 C76.000,142.962 94.080,65.000 185.000,65.000 C275.920,65.000 292.000,141.024 292.000,157.000 C292.000,172.976 277.640,249.000 190.000,249.000 C102.360,249.000 93.175,179.766 92.000,175.000 C87.519,156.831 97.905,77.000 185.000,77.000 C272.095,77.000 276.342,148.506 277.000,161.000 C279.160,202.042 232.882,237.018 189.000,238.000 C145.118,238.982 106.118,199.188 106.000,173.000 C105.882,146.812 111.400,118.993 134.000,104.000 C156.600,89.007 181.177,87.409 185.000,88.000 C188.823,88.591 217.537,87.348 236.000,104.000 C254.463,120.652 267.176,138.838 266.000,157.000 C264.824,175.162 251.548,204.184 238.000,212.000 C224.452,219.816 201.979,227.306 190.000,227.000 C178.021,226.694 148.408,220.180 139.000,210.000 C129.592,199.820 117.492,184.548 117.000,173.000 C116.508,161.452 115.793,140.231 127.000,127.000 C138.207,113.769 149.257,105.621 163.000,102.000 C176.743,98.379 205.497,96.120 219.000,106.000 C232.503,115.880 246.512,124.122 250.000,140.000 C253.488,155.878 254.721,172.802 250.000,180.000 C245.279,187.198 238.207,195.600 231.000,201.000 C223.793,206.400 199.076,218.794 178.000,214.000 C156.924,209.206 135.809,197.850 130.000,182.000 C124.191,166.150 127.988,145.437 135.000,136.000 C142.012,126.563 160.996,107.036 181.000,108.000 C201.004,108.964 216.166,113.331 223.000,120.000 C229.834,126.669 241.895,137.969 244.000,149.000 C246.105,160.031 245.514,168.940 241.000,176.000 C236.486,183.060 229.499,194.228 221.000,198.000 C212.501,201.772 202.279,207.933 189.000,208.000 C175.721,208.067 163.479,202.179 158.000,198.000 C152.521,193.821 139.248,179.558 137.000,170.000 C134.752,160.442 140.120,146.732 145.000,140.000 C149.880,133.268 158.440,122.871 167.000,120.000 C175.560,117.129 190.520,116.807 197.000,118.000 C203.480,119.193 212.905,125.288 219.000,130.000 C225.095,134.712 232.053,144.922 233.000,151.000 C233.947,157.078 233.043,171.900 229.000,177.000 C224.957,182.100 225.917,194.014 201.000,198.000 C176.083,201.986 174.060,198.055 166.000,194.000 C157.940,189.945 149.933,177.340 148.000,172.000 C146.067,166.660 149.408,159.884 149.000,153.000 C148.592,146.116 157.000,137.000 157.000,137.000 L170.000,129.000 L186.000,125.000 L199.000,128.000 L214.000,135.000 L224.000,153.000 L221.000,173.000 L209.000,186.000 L189.000,191.000 L169.000,184.000 L161.000,175.000 L157.000,160.000 L159.000,149.000 L166.000,141.000 L184.000,135.000 L201.000,136.000 L211.000,144.000 L216.000,159.000 L212.000,172.000 L201.000,180.000 L183.000,182.000 L172.000,177.000 L167.000,164.000 L170.000,149.000 L182.000,142.000 L192.000,143.000 L202.000,147.000 L207.000,157.000 L205.000,167.000 L197.000,173.000 L184.000,174.000 L175.000,166.000 L176.000,152.000 L187.000,150.000 L194.000,154.000 L198.000,161.000 L194.000,168.000 L186.000,168.000 L180.000,161.000 L184.000,157.000 L190.000,158.000 L190.000,164.000 " />
+        </svg>
+        <div class="dial"></div>
+        <div class="knob"></div>
+        <div class="witness"><textarea width="20" height="4">Type your wish here...</textarea></div>
+        <div class="radiator">
+            <svg class="radiate" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+             <circle cx="50" cy="50" r="50" stroke="#fff" fill="#0000"/>
+            </svg>
+        </div>
+
+    </main>
+    <script>
+        const $ = str => document.querySelector(str);
+        const $$ = str => document.querySelectorAll(str);
+
+        (function() {
+            const app = {
+                data: {},
+                state: {
+                    loaded: false,
+                    knob: 0
+                },
+                init: function() {
+                    app.state.loaded = true;
+                    let el = $(".radiate");
+                    for (let i=0; i < 7; i++) {
+                        $(".radiator").append(el.cloneNode(true));
+                    }
+                    $(".knob").addEventListener("mousedown", function(e) {
+                        app.state.turning = 1;
+                        app.state.lastX = e.x;
+                        app.state.lastY = e.y;
+                        
+                        let deltaX = 700 - e.x;
+                        let deltaY = 400 - e.y;
+                        //app.state.knob = Math.atan2(deltaX, -deltaY);
+                        app.state.knob = (Math.atan2(-deltaX, deltaY)) * (180 / Math.PI);
+
+                        $(".knob").style.rotate = app.state.knob + 'deg';
+                     });
+                    document.addEventListener("mouseup", function(e) {
+
+                        if (app.state.turning) {
+                            let p = (app.state.knob + 180) / 360;
+                            $("#beta").value = Math.floor(p * 120);
+                            app.updateSettings();
+                            app.state.turning = 0;
+                        }
+                    });
+                    document.addEventListener("mousemove", function(e) {
+                        if (app.state.turning) {
+                            let deltaX = 700 - e.x;
+                            let deltaY = 400 - e.y;
+                            app.state.knob = (Math.atan2(-deltaX, deltaY)) * (180 / Math.PI);
+                            
+                            $(".knob").style.rotate = app.state.knob + 'deg';
+                            
+                            app.state.lastX = e.x;
+                            app.state.lastY = e.y;
+                            
+                            let p = (app.state.knob + 180) / 360;
+                            $("#beta").value = Math.floor(p * 120);
+                            app.updateSettings();
+ 
+                        }
+                    });
+                },
+                fetch: function(url, callback) {
+                    fetch(url).then(response => response.json()).then(data => {
+                        app.data = data;
+                        app.state.loaded = true;
+                        if (callback && typeof(callback) ===
+                            "function") {
+                            callback(data);
+                        }
+                    });
+                },
+                display: function(data, tgt) {
+                    let out = "<table><thead><tr>";
+                    const keys = Object.keys(data[0]);
+                    if (keys) {
+                        keys.forEach(key => {
+                            out += `<th>${key}</th>`;
+                        });
+                    }
+                    out += "</tr></thead><tbody>";
+                    data.forEach(item => {
+                        out += `<tr>`;
+                        keys.forEach(key => {
+                            out += `<td>${item[i]}</td>`;
+                        });
+                        out += `</tr>`;
+                    });
+                    out += "</tbody></table>";
+
+                    if (tgt) {
+                        tgt.innerHTML = out;
+                    }
+                    return out;
+                },
+                updateSettings: function(e) {
+                    
+                    if (e && e.id) {
+                        let show = e.target.id + 'Val';
+                        if (show) show.innerHTML = e.value;
+                    }
+
+                    let a = $("#alpha").value;
+                    let b = $("#beta").value;
+                    let c = $("#gamma").value;
+                    
+                    $("#alphaVal").innerHTML = a;
+                    $("#betaVal").innerHTML = b;
+                    $("#gammaVal").innerHTML = c;
+
+                    $$("path").forEach(p => {
+                        p.style.strokeDasharray = `${a} ${b}`;
+                        p.style.animation = `dash ${c}ms linear infinite`;
+                    });
+                }
             }
-            return out;
-        },
-        updateSettings: function() {
-            let a = $("#alpha").value;
-            let b = $("#beta").value;
-            let c = $("#gamma").value;
-            
-            $$("path").forEach(p=>{ 
-                p.style.strokeDasharray = `${a} ${b}`;
-                p.style.animation = `dash ${c}s linear infinite`;
-            });
-        }
-    }
-    window.app = app;
-    app.init();
-})();
-</script>
+            window.app = app;
+            app.init();
+        })();
+    </script>
 </body>
 
 </html>
