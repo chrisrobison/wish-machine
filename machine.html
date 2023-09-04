@@ -165,75 +165,83 @@
     }
 
     .radiate {
-      width: 100%;
-      height: 100%;
+      width: 400px;
+      height: 400px;
       position: absolute;
-      top: 0;
-      left: 0;
+      top: -110px;
+      left: -90px;
       opacity: 0;
       animation-name: radiate;
-      animation-duration: 4s;
+      animation-duration: 5.5s;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
       animation-direction: normal;
       animation-fill-mode: forward;
+      animation-play-state: running;
     }
+    .radiate circle {
+
+      stroke-width: 1px;
+    }
+
+
     .radiate path {
-      fill: #fff;
+      fill: #09f;
     }
 
-    .radiate:nth-child(1) {
-      animation-delay: 0.5s;
-    }
-
-    .radiate:nth-child(2) {
-      animation-delay: 1s;
-    }
-
-    .radiate:nth-child(3) {
-      animation-delay: 1.5s;
-    }
-
-    .radiate:nth-child(4) {
-      animation-delay: 2s;
-    }
-
-    .radiate:nth-child(5) {
-      animation-delay: 2.5s;
-    }
-
-    .radiate:nth-child(6) {
-      animation-delay: 3s;
-    }
-
-    .radiate:nth-child(7) {
-      animation-delay: 3.5s;
-    }
-
-    .radiate:nth-child(8) {
-      animation-delay: 4s;
-    }
+    .radiate:nth-child(1) { animation-delay: 0.5s; }
+    .radiate:nth-child(2) { animation-delay: 1s; }
+    .radiate:nth-child(3) { animation-delay: 1.5s; }
+    .radiate:nth-child(4) { animation-delay: 2s; }
+    .radiate:nth-child(5) { animation-delay: 2.5s; }
+    .radiate:nth-child(6) { animation-delay: 3s; }
+    .radiate:nth-child(7) { animation-delay: 3.5s; }
+    .radiate:nth-child(8) { animation-delay: 4s; }
+    .radiate:nth-child(9) { animation-delay: 4.5s; }
+    .radiate:nth-child(10) { animation-delay: 5s; }
 
     @keyframes radiate {
       0% {
-        opacity: 0;
+        opacity: 1;
         transform: scale(0);
       }
       1% {
-        opacity: 0.1;
+        opacity: .9;
       }
       100% {
         opacity: 0;
-        transform: scale(1);
+        transform: scale(20);
       }
     }
 .radiator {
-    left: -710px;
+    left: 50px;
     position: absolute;
-    top: -250px;
-    height: 80vh;
-    width: 100vw;
+    top: 50px;
+    height: 400px;
+    width: 400px;
+    pointer-events: none;
 }
+#panel {
+    height: 319px;
+    width: 440px;
+    background-image: url("panel.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    position: absolute;
+    bottom: 20px;
+    right: 260px;
+}
+    #switch {
+        position: absolute;
+        top: 450px;
+        left: 953px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 75px; 
+        width: 50px;
+    }
+    #switch.on { background-image: url("on.png"); }
+    #switch.off { background-image: url("off.png"); }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
@@ -248,12 +256,12 @@
         <!--object id="machine" type="image/svg+xml" data="machine2.svg" class="machine">
         Manifestation Machine!
     </object-->
-        <svg id="power" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        <svg id="power" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none;"
             width="1770px" height="1195px">
             <style>
                 .trace {
                     stroke-dasharray: 10 20;
-                    animation: dash 4s linear infinite;
+                    animation: dash 4s linear infinite paused;
                 }
 
                 @keyframes dash {
@@ -532,11 +540,15 @@
         <div class="knob"></div>
         <div class="witness"><textarea width="20" height="4">Type your wish here...</textarea></div>
         <div class="radiator">
-            <svg class="radiate" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
-             <circle cx="50" cy="50" r="50" stroke="#fff" fill="#0000"/>
+            <svg class="radiate" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="400px" height="400px" viewBox="0 0 400 400" enable-background="new 0 0 400 400" xml:space="preserve">
+             <circle cx="200" cy="200" r="25" stroke="#fff" fill="#0000"/>
             </svg>
         </div>
-
+        <div id="panel">
+            <div id="knob2" class="knob"></div>
+            <div id="knob3" class="knob"></div>
+        </div>
+        <button id="switch" class="off" onclick="app.togglePower()"></button>
     </main>
     <script>
         const $ = str => document.querySelector(str);
@@ -546,13 +558,14 @@
             const app = {
                 data: {},
                 state: {
+                    power: 0,
                     loaded: false,
                     knob: 0
                 },
                 init: function() {
                     app.state.loaded = true;
                     let el = $(".radiate");
-                    for (let i=0; i < 7; i++) {
+                    for (let i=0; i < 10; i++) {
                         $(".radiator").append(el.cloneNode(true));
                     }
                     $(".knob").addEventListener("mousedown", function(e) {
@@ -567,6 +580,7 @@
 
                         $(".knob").style.rotate = app.state.knob + 'deg';
                      });
+
                     document.addEventListener("mouseup", function(e) {
 
                         if (app.state.turning) {
@@ -593,6 +607,25 @@
  
                         }
                     });
+                    $$(".radiate").forEach(el=>el.style.animationPlayState = 'paused');
+                },
+                togglePower: function() {
+                    app.state.power ^= 1;
+                    let el = $("#power");
+
+                    if (app.state.power) {
+                        el.querySelectorAll(".trace").forEach(item=>{item.style.animationPlayState = 'running'});
+                        $$(".radiate").forEach(item=>{ item.style.display = "block"; item.style.animationPlayState = 'running'; } );
+                        $("#switch").classList.remove("off");
+                        $("#switch").classList.add("on");
+                        $("#power").style.display = "block";
+                    } else {
+                        el.querySelectorAll(".trace").forEach(item=>{item.style.animationPlayState = 'paused'});
+                        $$(".radiate").forEach(item=>{ item.style.display = "none"; item.style.animationPlayState = 'paused'; });
+                        $("#switch").classList.remove("on");
+                        $("#switch").classList.add("off");
+                        $("#power").style.display = "none";
+                    }
                 },
                 fetch: function(url, callback) {
                     fetch(url).then(response => response.json()).then(data => {
@@ -643,8 +676,9 @@
                     $("#gammaVal").innerHTML = c;
 
                     $$("path").forEach(p => {
+                        let state = (app.state.power) ? "running" : "paused";
                         p.style.strokeDasharray = `${a} ${b}`;
-                        p.style.animation = `dash ${c}ms linear infinite`;
+                        p.style.animation = `dash ${c}ms linear infinite ${state}`;
                     });
                 }
             }
