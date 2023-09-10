@@ -270,9 +270,9 @@
 <body>
     <main>
         <form oninput="app.updateSettings(event)">
-            <label>λ</label> <span id='alphaVal' class='digit'>10</span> <input id="alpha" type="range" min="0" max="1000" size="5" value="10"><br>
-            <label>β</label> <span id='betaVal' class='digit'>20</span> <input id="beta"  type="range" min="0" max="1000" size="5" value="20"><br>
-            <label>ν</label> <span id='gammaVal' class='digit'>4000</span> <input id="gamma" type="range" min="256" max="30000" step="100" size="5" value="4000"><br>
+            <label>λ</label> <span id='alphaVal' class='digit'>10</span> <input id="alpha" type="range" min="0" max="1000" size="5" value="10" onchange="app.updateKnob(2, this.value)"><br>
+            <label>β</label> <span id='betaVal' class='digit'>20</span> <input id="beta"  type="range" min="0" max="1000" size="5" value="20" onchange="app.updateKnob(3, this.value)"><br>
+            <label>ν</label> <span id='gammaVal' class='digit'>4000</span> <input id="gamma" type="range" min="256" max="30000" step="100" size="5" value="4000" onchange="app.updateKnob(1, this.value)"><br>
         </form>
         <!--object id="machine" type="image/svg+xml" data="machine2.svg" class="machine">
         Manifestation Machine!
@@ -624,7 +624,7 @@
                             app.state.lastY = e.y;
                             
                             let p = (app.state.knob + 180) / 360;
-                            $("#beta").value = Math.floor(p * 120);
+                            $("#gamma").value = Math.floor(p * 4000);
                             app.updateSettings();
  
                         }
@@ -659,6 +659,12 @@
                         }
                     });
                 },
+                updateKnob: function(num, val) {
+                    if (num>1) {
+                        let amt = (val / 1000) * 180;
+                        $(`#knob${num}`).style.transform = `rotate(${amt}deg)`;
+                    }
+                },
                 display: function(data, tgt) {
                     let out = "<table><thead><tr>";
                     const keys = Object.keys(data[0]);
@@ -688,7 +694,14 @@
                         let show = e.target.id + 'Val';
                         if (show) show.innerHTML = e.value;
                     }
-
+                    
+                    console.dir(e);
+                    if (e.target.id == "alpha") {
+                        app.updateKnob(2, e.target.value);
+                    }
+                    if (e.target.id == "beta") {
+                        app.updateKnob(3, e.target.value);
+                    }
                     let a = $("#alpha").value;
                     let b = $("#beta").value;
                     let c = $("#gamma").value;
