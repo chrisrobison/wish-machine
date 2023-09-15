@@ -47,12 +47,59 @@
             flex-direction: row;
             white-space: nowrap;
         }
+        .buttons {
+            display: flex;
+        }
+        button {
+            width: 7rem;
+
+        }
+        .config-items {
+            display: flex;
+        }
+        .config-item {
+            display: flex;
+        }
+        #controls {
+            display:flex;
+            flex-direction:column;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <body>
 <main>
+    <form onsubmit="return false" oninput="app.update()">
+        <div class='config-items'>
+            <div id="controls">
 
+              <button id="on-off">Turn On</button>
+              <div id="led"></div>
+
+              <label for="osc-type">Oscillator Type</label>
+              <select id="osc-type">
+                <option value="sine">Sine</option>
+                <option value="square">Square</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="triangle">Triangle</option>
+              </select>
+
+              <label for="freq">Frequency: <span id="freqValue">440</span></label>
+              <input id="freq" type="range" min="110" max="1760" step="1" value="440">
+
+              <label for="gain">Input Gain: <span id="gainValue">0.5</span></label>
+              <input id="gain" type="range" min="0" max="1" step="0.05" value="0.5">
+
+            </div>
+            <div>
+                <div class='config-item'><label for="freq">Fundamental Freq</label><input type="number" id="fund" name="fund" min="10" max="22000" value="440">Hz</div>
+                <div class='config-item'><label for="beat">Beat</label><input type="number" id="beat" name="beat" min="1" max="40" value="4">Hz</div>
+                <div class='config-item'><label for="intervals">Intervals</label><input type="text" id="intervals" name="intervals" value="1,2,3"></div>
+            </div>
+        </div>
+        <div class='buttons'><button onclick="app.init()">Start</button><button onclick="app.pauseAudio()">Pause</button><button onclick="app.playAudio()">Resume</button></div>
+    </form>
+    <canvas id="viz" height="300" width="900"></canvas>
 </main>
 <script>
 const $ = str => document.querySelector(str);
@@ -61,29 +108,111 @@ const $$ = str => document.querySelectorAll(str);
 (function() {
     const app = {
         data: {},
+        config: {
+            beat: 4,
+            intervals: [ 1, 2],
+            fundamental: 400,
+            freq: 400,
+            visualization: "sinewave",
+            gain: 0.5
+        },
         state: {
             loaded: false
         },
         channels: [],
         oscillators: [],
-        init: function() {
+        panNodes: [],
+        gainNodes: [],
+        init: function(beat=4, freq=400, intervals=[1,2,3]) {
+            app.canvas = $("#viz");
+            app.ctx = app.canvas.getContext("2d");
+            
+            let osctype = $("#osc-type").options[$("#osc-type").selectedIndex].value;
+
             let osc1, osc2;
+
+            if (app.channels[0]) app.channels[0].close();
+            if (app.channels[1]) app.channels[1].close();
+
             app.channels[0] = new (window.AudioContext || window.webkitAudioContent) ();
             app.channels[1] = new (window.AudioContext || window.webkitAudioContent) ();
             
-            osc1 = app.oscillators[0] = app.channels[0].createOscillator() //default frequency is 440HZ
-            osc2 = app.oscillators[1] = app.channels[1].createOscillator() 
+            app.analyser = app.channels[0].createAnalyser();
+            app.analyser.minDecibels = -90;
+            app.analyser.maxDecibels = -10;
+            app.analyser.smoothingTimeConstant = 0.85;
 
-            app.leftStereo = new StereoPannerNode(app.channels[0], { pan: -1 });
-            app.rightStereo = new StereoPannerNode(app.channels[1], { pan: 1});
+            app.config.beat = beat;
+            app.config.fundamental = freq;
+            app.config.intervals = intervals;
+            
+            app.gainNodes[0] = app.channels[0].createGain();
+            app.gainNodes[0].gain.value = app.config.gain;
 
-            osc1.connect(app.leftStereo).connect(app.channels[0].destination);
-            osc2.connect(app.rightStereo).connect(app.channels[1].destination);
-            
-            osc1.start();
-            osc2.start();
-            
+            app.panNodes = [ app.channels[0].createStereoPanner(), app.channels[1].createStereoPanner() ];
+            app.panNodes[0].pan.value = -1;
+            app.panNodes[1].pan.value = 1;
+            app.panNodes[0].connect(app.analyser);
+            app.panNodes[1].connect(app.channels[1].destination);
+            app.analyser.connect(app.channels[0].destination);
+
+            for (let i=0; i < intervals.length * 2; i++) {
+                let pan = i % 2;
+                let o = app.channels[pan].createOscillator();
+                o.type = osctype;
+                let interval = intervals[Math.floor(i/2)];
+                console.log(`Freq: ${app.config.freq}`);
+                if (pan) {
+                    o.frequency.value = (app.config.freq + app.config.beat) * interval;
+                } else {
+                    o.frequency.value = (app.config.freq + 0) * interval;
+                }
+                o.start();
+                o.connect(app.panNodes[pan]);
+                app.oscillators[i] = o;
+            }
+
+            app.set(4, app.config.freq / 4, [1, 2, 3]);
+
             app.state.loaded = true;
+            app.visualize();
+        },
+        update: function() {
+            let beat = $("#beat").value;
+            let freq = $("#freq").value;
+            let ints = $("#intervals").value;
+            let gain = $("#gain").value;
+
+            let intervals = ints.split(/,\s*/);
+            
+            $("#freqValue").innerHTML = freq + 'hz';
+            $("#gainValue").innerHTML = gain;
+
+            app.config.intervals = intervals;
+            app.config.beat = beat;
+            app.config.freq = freq;
+            app.config.fundamental = freq;
+            app.config.gain = gain;
+
+            app.init();
+
+        },
+        set: function(beat, freq, intervals) {
+            intervals = (intervals) ? intervals : app.config.intervals;
+            freq = (freq) ? freq : app.config.freq;
+            beat = (beat) ? beat : app.config.beat;
+
+            for (let i=0; i < app.oscillators.length; i++) {
+                let pan = i % 2;
+                let interval = intervals[Math.floor(i/2)];
+                o = app.oscillators[i];
+
+                if (pan) {
+                    o.frequency.value = (freq + beat) * interval;
+                } else {
+                    o.frequency.value = (freq + 0) * interval;
+                }
+            }
         },
         pauseAudio: function() {
             app.channels.forEach(ch=>ch.suspend());
@@ -91,6 +220,7 @@ const $$ = str => document.querySelectorAll(str);
         },
         playAudio: function() {
             app.channels.forEach(ch=>ch.resume());
+            return false;
         },
         fetch: function(url, callback) {
             fetch(url).then(response=>response.json()).then(data=>{
@@ -123,10 +253,102 @@ const $$ = str => document.querySelectorAll(str);
                 tgt.innerHTML = out;
             }
             return out;
-        }
+        },
+        visualize: function() {
+            let WIDTH = app.canvas.width;
+            let HEIGHT = app.canvas.height;
+
+            const visualSetting = app.config.visualization;
+
+            if (visualSetting === "sinewave") {
+              app.analyser.fftSize = 2048;
+              const bufferLength = app.analyser.fftSize;
+
+              // We can use Float32Array instead of Uint8Array if we want higher precision
+              // const dataArray = new Float32Array(bufferLength);
+              const dataArray = new Uint8Array(bufferLength);
+
+              app.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+              const draw = function () {
+                drawVisual = requestAnimationFrame(draw);
+
+                app.analyser.getByteTimeDomainData(dataArray);
+
+                app.ctx.fillStyle = "rgb(0, 0, 0)";
+                app.ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                app.ctx.lineWidth = 2;
+                app.ctx.strokeStyle = "rgb(0, 255, 0)";
+
+                app.ctx.beginPath();
+
+                const sliceWidth = (WIDTH * 1.0) / bufferLength;
+                let x = 0;
+
+                for (let i = 0; i < bufferLength; i++) {
+                  let v = dataArray[i] / 128.0;
+                  let y = (v * HEIGHT) / 2;
+                  if (i === 0) {
+                    app.ctx.moveTo(x, y);
+                  } else {
+                    app.ctx.lineTo(x, y);
+                  }
+
+                  x += sliceWidth;
+                }
+
+                app.ctx.lineTo(app.canvas.width, app.canvas.height / 2);
+                app.ctx.stroke();
+              };
+
+              draw();
+            } else if (visualSetting == "frequencybars") {
+              analyser.fftSize = 256;
+              const bufferLengthAlt = app.analyser.frequencyBinCount;
+
+              // See comment above for Float32Array()
+              const dataArrayAlt = new Uint8Array(bufferLengthAlt);
+
+              app.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+              const drawAlt = function () {
+                drawVisual = requestAnimationFrame(drawAlt);
+
+                app.analyser.getByteFrequencyData(dataArrayAlt);
+
+                app.ctx.fillStyle = "rgb(0, 0, 0)";
+                app.ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+                const barWidth = (WIDTH / bufferLengthAlt) * 2.5;
+                let barHeight;
+                let x = 0;
+
+                for (let i = 0; i < bufferLengthAlt; i++) {
+                  barHeight = dataArrayAlt[i];
+
+                  app.ctx.fillStyle = "rgb(" + (barHeight + 100) + ",50,50)";
+                  app.ctx.fillRect(
+                    WIDTH - barWidth,
+                    HEIGHT - barHeight / 2,
+                    barWidth,
+                    barHeight / 2
+                  );
+
+                  x += barWidth + 1;
+                }
+              };
+
+              drawAlt();
+            } else if (visualSetting == "off") {
+              app.ctx.clearRect(0, 0, WIDTH, HEIGHT);
+              app.ctx.fillStyle = "red";
+              app.ctx.fillRect(0, 0, WIDTH, HEIGHT);
+            }
+          }
+
     }
     window.app = app;
-    app.init();
 })();
 </script>
 </body>
