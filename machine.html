@@ -268,12 +268,20 @@
         width: 600px;
         height: 600px;
         background-repeat: no-repeat;
-        background-image: url("sheme3.jpg");
         position: absolute;
         z-index: 99999;
         opacity: 0.5;
         top: 50px;
         left: 1000px;
+    }
+    #witness {
+        width: 600px;
+        height: 600px;
+        position: absolute;
+        top: 50px;
+        left: 1000px;
+        background-color: #fff3;
+        opacity: 0.5;
     }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -285,6 +293,8 @@
             <label>λ</label> <span id='alphaVal' class='digit'>10</span> <input id="alpha" type="range" min="0" max="1000" size="5" value="10" onchange="app.updateKnob(2, this.value)"><br>
             <label>β</label> <span id='betaVal' class='digit'>20</span> <input id="beta"  type="range" min="0" max="1000" size="5" value="20" onchange="app.updateKnob(3, this.value)"><br>
             <label>ν</label> <span id='gammaVal' class='digit'>4000</span> <input id="gamma" type="range" min="256" max="30000" step="100" size="5" value="4000" onchange="app.updateKnob(1, this.value)"><br>
+            <input type="file" id="imgfile">
+            <input type='button' id='btnLoad' value='Load' onclick='app.loadImage();'>
         </form>
         <!--object id="machine" type="image/svg+xml" data="machine2.svg" class="machine">
         Manifestation Machine!
@@ -584,13 +594,14 @@
         </div>
         <button id="switch" class="off" onclick="app.togglePower()"></button>
         <div id="well"></div>
+        <canvas id="witness" height="600" width="600"></canvas>
     </main>
     <script>
         const $ = str => document.querySelector(str);
         const $$ = str => document.querySelectorAll(str);
 
         (function() {
-            const app = {
+            let app = {
                 data: {},
                 state: {
                     power: 0,
@@ -622,8 +633,8 @@
                             let p = (app.state.knob + 180) / 360;
                             $("#beta").value = Math.floor(p * 120);
                             app.updateSettings();
-                            app.state.turning = 0;
                         }
+                        app.state.turning = 0;
                     });
                     document.addEventListener("mousemove", function(e) {
                         if (app.state.turning) {
@@ -680,7 +691,7 @@
                 },
                 display: function(data, tgt) {
                     let out = "<table><thead><tr>";
-                    const keys = Object.keys(data[0]);
+                    let keys = Object.keys(data[0]);
                     if (keys) {
                         keys.forEach(key => {
                             out += `<th>${key}</th>`;
@@ -709,11 +720,14 @@
                     }
                     
                     console.dir(e);
-                    if (e.target.id == "alpha") {
-                        app.updateKnob(2, e.target.value);
-                    }
-                    if (e.target.id == "beta") {
-                        app.updateKnob(3, e.target.value);
+
+                    if (e && e.target) {
+                        if (e.target.id == "alpha") {
+                            app.updateKnob(2, e.target.value);
+                        }
+                        if (e.target.id == "beta") {
+                            app.updateKnob(3, e.target.value);
+                        }
                     }
                     let a = $("#alpha").value;
                     let b = $("#beta").value;
@@ -728,8 +742,56 @@
                         p.style.strokeDasharray = `${a} ${b}`;
                         p.style.animation = `dash ${c}ms linear infinite ${state}`;
                     });
+                },
+                loadImage: function() {
+                    var input, file, fr, img;
+
+                    if (typeof window.FileReader !== 'function') {
+                        console.log("The file API isn't supported on this browser yet.");
+                        return;
+                    }
+
+                    input = document.querySelector("input[type=file]");
+
+                    if (!input) {
+                        write("Um, couldn't find the imgfile element.");
+                    }
+                    else if (!input.files) {
+                        write("This browser doesn't seem to support the `files` property of file inputs.");
+                    }
+                    else if (!input.files[0]) {
+                        write("Please select a file before clicking 'Load'");
+                    }
+                    else {
+                        file = input.files[0];
+                        fr = new FileReader();
+                        fr.onload = createImage;
+                        fr.readAsDataURL(file);
+                    }
+
+                    function createImage() {
+                        img = new Image();
+                        img.onload = imageLoaded;
+                        img.src = fr.result;
+                    }
+
+                    function imageLoaded() {
+                        var canvas = document.getElementById("witness");
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        var ctx = canvas.getContext("2d");
+                        ctx.drawImage(img,0,0);
+                        //alert(canvas.toDataURL("image/png"));
+                    }
+
+                    function write(msg) {
+                        var p = document.createElement('p');
+                        p.innerHTML = msg;
+                        document.body.appendChild(p);
+                    }
                 }
-            }
+            };
+
             window.app = app;
             app.init();
         })();
